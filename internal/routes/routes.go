@@ -55,4 +55,16 @@ func SetupRoutes(app *fiber.App) {
 		}
 		return ctx.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "game not found"})
 	})
+	games.Post("", func(ctx fiber.Ctx) error {
+		game := new(models.Game)
+		if err := ctx.Bind().All(game); err != nil {
+			return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+		}
+
+		// Update listGame
+		game.ID = len(listGame) + 1
+		listGame = append(listGame, *game)
+
+		return ctx.Status(201).JSON(game)
+	})
 }
